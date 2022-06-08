@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>short.url - Acortador de enlaces</title>
+    <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
+    crossorigin="anonymous">
+  </head>
+  <body>
+        <!-- Nav Bar -->
+        <nav class="navbar navbar-dark" style="background-color: #0C6096;">
+            <!-- Navbar content -->
+            <div class="container-fluid">
+                <a
+                class="nav-bar-brand p-2 fs-3 fw-bold"
+                style="color: #090909; text-decoration: none;"
+                href="/">CORTADOR DE ENLACES CON PYTHON - FLASK
+                    <img
+                    src="static/img/Flask.png"
+                    style="max-width: 5%; margin-left: 30px;" alt="Logotipo Python Flask">
+                </a>
+            </div>
+          </nav>
+
+          <div class="container p-5">
+            {% block body %}{% endblock %}
+          </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+  </body>
+</html>
