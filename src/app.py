@@ -9,13 +9,16 @@ app = Flask(__name__)
 endpoint = 'http://short.url'
 
 # Conexión MySQL
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'SQL223010'
-app.config['MYSQL_DATABASE'] = 'db_shortURL'
+app.config['MYSQL_HOST'] = '#'
+app.config['MYSQL_USER'] = '#'
+app.config['MYSQL_PASSWORD'] = '#'
+app.config['MYSQL_DATABASE'] = '#'
 
 # Iniciamos la base de datos
 mysql = MySQL(app)
+
+# Llave secreta para usar mensajes flash
+app.secret_key="millavesecreta"
 
 # Ruta inicial
 @app.route('/', methods=['GET'])
@@ -50,8 +53,8 @@ def crear_enlace_corto():
                 "SELECT enlaces_cortos FROM enlaces WHERE URL = BINARY %s", (url,))
             data = cursor.fetchone()
             if data:
-                nuevo_enlace = endpoint + '/' + data[0]
-                return jsonify(respuesta=nuevo_enlace)
+                flash = endpoint + '/' + data[0]
+                return redirect(url_for('inicio')), 302
                 
             # Ingresamos en la base de datos la URL enviada
             cursor.execute(
@@ -63,12 +66,13 @@ def crear_enlace_corto():
             # Cerramos la conexión de la base de datos
             cursor.close()
             nuevo_enlace = endpoint + '/' + enlaces_cortos
-            
-            return jsonify(respuesta=nuevo_enlace)
+            flash(nuevo_enlace)
+            return redirect(url_for('inicio')), 302
         
     except:    
-        return jsonify(respuesta='Error en petición'), 500
+        return render_template('404.html'), 404
     
+    # Ruta para ir a URL de Base de Datos
     @app.route('/<id>')
     def obtener_url(id):
         try:
@@ -76,17 +80,17 @@ def crear_enlace_corto():
             
             # Buscamos en la base de datos la dirección URL
             cursor.execute(
-                "SELECT URL FROM ENLACES WHERE ENLACES_CORTOS = BINARY %s", (id,))
+                "SELECT URL FROM enlaces WHERE enlaces_cortos = BINARY %s", (id,))
             
             # Guardamos en variable el resultado
             data = cursor.fetchone()
             
             # Cerramos conexión a Base de Datos
             cursor.close()
-            return jsonify(respuesta=data[0]), 200
+            return render_template('ads.html', url=data[0]), 200
         
         except:
-            return jsonify(respuesta='Error en petición'), 500
+            return render_template('404.html'), 404
         
 #Corremos APP
 if __name__ == "__main__":

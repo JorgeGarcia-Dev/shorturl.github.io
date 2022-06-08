@@ -1,6 +1,8 @@
+{% extends "layout.html" %} {% block body %}
+
 <div class="d-flex flex-column justify-content-center">
     <h1 id="contador" class="text-center fs-1 fw-bold">5</h1>
-    <img src="" alt="Publicidad" style="border-radius: 100px;">
+    <img src="static/img/img_ad.png" alt="Publicidad" style="border-radius: 100px;">
 </div>
 <script>
     function redirect() {
@@ -9,8 +11,12 @@
         setInterval(() => {
             if (valor > 0) {
                 contador.innerHTML = valor -= 1;
+            } else {
+                location.replace("{{ url }}");
             }
-        }, 1000)
+        }, 1000);
     }
     redirect();
 </script>
+
+{% endblock %}
