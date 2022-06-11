@@ -2,96 +2,99 @@ from flask import Flask, render_template, url_for, flash, request, redirect, jso
 from flask_mysql_connector import MySQL
 import shortuuid
 
-# Inicializamos APP
+# inicializamos app
 app = Flask(__name__)
 
-# EndPoint
+# endpoint
 endpoint = 'http://short.url'
 
-# Conexión MySQL
-app.config['MYSQL_HOST'] = '#'
-app.config['MYSQL_USER'] = '#'
-app.config['MYSQL_PASSWORD'] = '#'
-app.config['MYSQL_DATABASE'] = '#'
+# Conexión MySql
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'SQL223010'
+app.config['MYSQL_DATABASE'] = 'db_enlaces_cortos'
 
-# Iniciamos la base de datos
+# iniciamos la Base de Datos
 mysql = MySQL(app)
 
-# Llave secreta para usar mensajes flash
-app.secret_key="millavesecreta"
 
-# Ruta inicial
+# llave secrea para user mensajes flash
+app.secret_key = "C1v3S3cr3t4"
+
+
+# Ruta Inicial
 @app.route('/', methods=['GET'])
 def inicio():
     try:
         return render_template('index.html'), 200
     except:
         return render_template('404.html'), 404
-    
-# Ruta para crear enlace corto y almacenar en la base de datos
+
+
+# Ruta para Crear Enlace Corto y Almacenar en la Base de Datos
 @app.route('/crear_enlace_corto', methods=['POST'])
 def crear_enlace_corto():
     try:
         if request.method == 'POST':
-            # Capturamos la URL
+            # Capturamos la url
             url = request.form['url']
             cursor = mysql.connection.cursor()
-            
+
             # Ciclo para validar enlace corto que no se duplique
             while True:
                 # Generamos el enlace corto
-                enlaces_cortos = shortuuid.ShortUUID().random(length=7)
-                # Consultamos a la base de datos si existe enlace corto
+                enlace_corto = shortuuid.ShortUUID().random(length=7)
+                # Consultamos a la Base de Datos si existe enlace corto
                 cursor.execute(
-                    "SELECT * FROM enlaces WHERE enlaces_cortos = BINARY %s", (enlaces_cortos,))
-                
+                    "SELECT * FROM enlaces WHERE enlace_corto = BINARY %s", (enlace_corto,))
+
                 if not cursor.fetchone():
                     break
-                
+
             # Consultamos si en la base de datos existe URL
             cursor.execute(
-                "SELECT enlaces_cortos FROM enlaces WHERE URL = BINARY %s", (url,))
+                "SELECT enlace_corto FROM enlaces WHERE url = BINARY %s", (url,))
             data = cursor.fetchone()
             if data:
-                flash = endpoint + '/' + data[0]
+                flash(endpoint + '/'+data[0])
                 return redirect(url_for('inicio')), 302
-                
-            # Ingresamos en la base de datos la URL enviada
+
+            # Ingresamos en la base de datos la url enviada
             cursor.execute(
-                "INSERT INTO enlaces (url, enlaces_cortos) VALUES (%s,%s)", (url, enlaces_cortos))
-            
+                "INSERT INTO enlaces (url, enlace_corto) VALUES (%s,%s)", (url, enlace_corto))
+
             # Guardamos cambios en Base de Datos
             mysql.connection.commit()
-            
+
             # Cerramos la conexión de la base de datos
             cursor.close()
-            nuevo_enlace = endpoint + '/' + enlaces_cortos
+            nuevo_enlace = endpoint + '/'+enlace_corto
             flash(nuevo_enlace)
             return redirect(url_for('inicio')), 302
-        
-    except:    
+    except:
         return render_template('404.html'), 404
-    
-    # Ruta para ir a URL de Base de Datos
-    @app.route('/<id>')
-    def obtener_url(id):
-        try:
-            cursor = mysql.connection.cursor()
-            
-            # Buscamos en la base de datos la dirección URL
-            cursor.execute(
-                "SELECT URL FROM enlaces WHERE enlaces_cortos = BINARY %s", (id,))
-            
-            # Guardamos en variable el resultado
-            data = cursor.fetchone()
-            
-            # Cerramos conexión a Base de Datos
-            cursor.close()
-            return render_template('ads.html', url=data[0]), 200
-        
-        except:
-            return render_template('404.html'), 404
-        
-#Corremos APP
+
+
+# Ruta para ir a URL de Base de Datos
+@app.route('/<id>')
+def obtener_url(id):
+    try:
+        cursor = mysql.connection.cursor()
+
+        # Buscamos en la base de datos la dirección URL
+        cursor.execute(
+            "SELECT url FROM enlaces WHERE enlace_corto = BINARY %s", (id,))
+
+        # Guardamos en variable el resultado
+        data = cursor.fetchone()
+
+        # Cerrar Conexión de la Base de Datos
+        cursor.close()
+        return render_template('ads.html', url=data[0]), 200
+    except:
+        return render_template('404.html'), 404
+
+
+# corremos app
 if __name__ == "__main__":
     app.run(port=80, debug=True)
