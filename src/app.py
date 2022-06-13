@@ -11,7 +11,7 @@ endpoint = 'http://short.url'
 # Conexión MySql
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'SQL223010'
 app.config['MYSQL_DATABASE'] = 'db_enlaces_cortos'
 
 # iniciamos la Base de Datos

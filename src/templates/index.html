@@ -6,7 +6,7 @@
   </div>
   <div class="card card-body p-5 mt-5" style="border-radius: 20px">
     {% with nueva_url = get_flashed_messages()%} {% if not nueva_url %}
-    <form action="" {{ url_for('crear_enlace_corto') }} method="POST">
+    <form action="{{ url_for('crear_enlace_corto') }}" method="POST">
       <div class="input-group mb-3">
         <span
           class="input-group-text"
